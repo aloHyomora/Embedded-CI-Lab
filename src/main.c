@@ -1,12 +1,36 @@
 #include "stm32f10x.h"
 
-void uart_init(void) {
-    RCC->APB2ENR |= RCC_APB2ENR_USART1EN;  // USART1 클럭 활성화
-    GPIOA->CRH &= ~(GPIO_CRH_CNF9 | GPIO_CRH_MODE9);
-    GPIOA->CRH |= GPIO_CRH_CNF9_1 | GPIO_CRH_MODE9_0;  // TX (PA9) 설정
+void system_clock_init(void) {
+    // Reset clock configuration
+    RCC->CR |= RCC_CR_HSION;
+    RCC->CFGR = 0x00000000;
+    RCC->CR &= ~(RCC_CR_HSEON | RCC_CR_CSSON | RCC_CR_PLLON);
+    RCC->CR &= ~RCC_CR_HSEBYP;
+    RCC->CIR = 0x00000000;
 
-    USART1->BRR = 0x1D4C;  // 115200 baud rate 설정
-    USART1->CR1 |= USART_CR1_TE | USART_CR1_UE;  // 송신 활성화
+    // Configure clock for 8MHz operation
+    RCC->CR |= RCC_CR_HSION;
+    while(!(RCC->CR & RCC_CR_HSIRDY));
+    
+    // Set HCLK = SYSCLK, PCLK2 = HCLK, PCLK1 = HCLK
+    RCC->CFGR &= ~(RCC_CFGR_HPRE | RCC_CFGR_PPRE2 | RCC_CFGR_PPRE1);
+    
+    // Enable peripheral clocks
+    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN | RCC_APB2ENR_AFIOEN;
+}
+
+void uart_init(void) {
+    // Enable USART1 clock
+    RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+    
+    // Configure PA9 (TX) and PA10 (RX)
+    GPIOA->CRH &= ~(GPIO_CRH_CNF9 | GPIO_CRH_MODE9 | GPIO_CRH_CNF10 | GPIO_CRH_MODE10);
+    GPIOA->CRH |= GPIO_CRH_CNF9_1 | GPIO_CRH_MODE9;  // PA9: Alternative Push-Pull
+    GPIOA->CRH |= GPIO_CRH_CNF10_0;  // PA10: Floating Input
+    
+    // Configure USART1 (8MHz/115200)
+    USART1->BRR = 0x0045;  // 8MHz/115200 = 69.44 = 0x45
+    USART1->CR1 = USART_CR1_TE | USART_CR1_RE | USART_CR1_UE;
 }
 
 void uart_send(char c) {
@@ -14,27 +38,35 @@ void uart_send(char c) {
     USART1->DR = c;  // 데이터 전송
 }
 
-int main() {
-    // main.c 시작 부분에 메모리 접근 검증 코드 추가
-    volatile uint32_t *periph = (uint32_t*)0x40000000;
-    if ((uint32_t)periph >= 0x40000000 && (uint32_t)periph < 0x60000000) {
-        *periph = 0;  // 유효한 주소인지 테스트
-    }
+void delay(volatile uint32_t count) {
+    while (count--);
+}
 
+int main() {
+    system_clock_init();
     uart_init();
+    
     while (1) {
         uart_send('H');
         uart_send('e');
         uart_send('l');
         uart_send('l');
         uart_send('o');
-        uart_send(',');
-        uart_send(' ');
-        uart_send('U');
-        uart_send('A');
-        uart_send('R');
-        uart_send('T');
-        uart_send('!');
+        uart_send('\r');
         uart_send('\n');
+        // printf("Hello, World!\r\n");
+        
+        delay(1000000);  // Add delay between messages
     }
 }
+
+// #ifdef USE_FULL_ASSERT
+// void assert_failed(uint8_t* file, uint32_t line)
+// {
+//     /* User can add his own implementation to report the file name and line number */
+//     while (1)
+//     {
+//         /* 디버깅을 위해 무한 루프 */
+//     }
+// }
+// #endif
