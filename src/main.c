@@ -1,49 +1,56 @@
-#include "stm32f10x.h"
+#include <stdint.h>
+#include <core_cm4.h>         /* Makefile의 -I./CMSIS/Core/Include 옵션 활용 */
 
-void system_clock_init(void) {
-    // Reset clock configuration
-    RCC->CR |= RCC_CR_HSION;
-    RCC->CFGR = 0x00000000;
-    RCC->CR &= ~(RCC_CR_HSEON | RCC_CR_CSSON | RCC_CR_PLLON);
-    RCC->CR &= ~RCC_CR_HSEBYP;
-    RCC->CIR = 0x00000000;
+// UART0 registers structure (based on datasheet p.3-6)
+typedef struct {
+    volatile uint32_t DATA;    // 0x000 Data Register
+    volatile uint32_t STATE;   // 0x004 Status Register
+    volatile uint32_t CTRL;    // 0x008 Control Register
+    volatile uint32_t BAUDDIV; // 0x00C Baudrate Divider
+} UART0_TypeDef;
 
-    // Configure clock for 8MHz operation
-    RCC->CR |= RCC_CR_HSION;
-    while(!(RCC->CR & RCC_CR_HSIRDY));
-    
-    // Set HCLK = SYSCLK, PCLK2 = HCLK, PCLK1 = HCLK
-    RCC->CFGR &= ~(RCC_CFGR_HPRE | RCC_CFGR_PPRE2 | RCC_CFGR_PPRE1);
-    
-    // Enable peripheral clocks
-    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN | RCC_APB2ENR_AFIOEN;
+// SYSCON registers structure
+typedef struct {
+    volatile uint32_t REMAP;   // Remap control register
+    volatile uint32_t PMUCTRL; // PMU control register
+    volatile uint32_t RESETOP; // Reset option register
+    volatile uint32_t RESERVED;
+} SYSCON_TypeDef;
+
+// Base addresses from datasheet
+#define UART0_BASE    (0x40004000UL)
+#define SYSCON_BASE   (0x4002F000UL)
+
+#define UART0         ((UART0_TypeDef *)UART0_BASE)
+#define SYSCON        ((SYSCON_TypeDef *)SYSCON_BASE)
+
+// UART control bits
+#define UART_CTRL_TX_EN     (1UL << 0)
+#define UART_CTRL_RX_EN     (1UL << 1)
+#define UART_STATE_TX_FULL  (1UL << 0)
+
+void system_init(void) {
+    // Select ZBT SRAM1 (0x00000000) as boot memory
+    SYSCON->REMAP = 0;
 }
 
 void uart_init(void) {
-    // Enable USART1 clock
-    RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
-    
-    // Configure PA9 (TX) and PA10 (RX)
-    GPIOA->CRH &= ~(GPIO_CRH_CNF9 | GPIO_CRH_MODE9 | GPIO_CRH_CNF10 | GPIO_CRH_MODE10);
-    GPIOA->CRH |= GPIO_CRH_CNF9_1 | GPIO_CRH_MODE9;  // PA9: Alternative Push-Pull
-    GPIOA->CRH |= GPIO_CRH_CNF10_0;  // PA10: Floating Input
-    
-    // Configure USART1 (8MHz/115200)
-    USART1->BRR = 0x0045;  // 8MHz/115200 = 69.44 = 0x45
-    USART1->CR1 = USART_CR1_TE | USART_CR1_RE | USART_CR1_UE;
+    // Configure UART0 with 25MHz clock (datasheet p.4-1)
+    UART0->BAUDDIV = (25000000U / 115200U);
+    UART0->CTRL = UART_CTRL_TX_EN | UART_CTRL_RX_EN;
 }
 
 void uart_send(char c) {
-    while (!(USART1->SR & USART_SR_TXE));  // 송신 가능 대기
-    USART1->DR = c;  // 데이터 전송
+    while (UART0->STATE & UART_STATE_TX_FULL);  // Wait if TX buffer is full
+    UART0->DATA = c;
 }
 
 void delay(volatile uint32_t count) {
     while (count--);
 }
 
-int main() {
-    system_clock_init();
+int main(void) {
+    system_init();
     uart_init();
     
     while (1) {
@@ -54,19 +61,7 @@ int main() {
         uart_send('o');
         uart_send('\r');
         uart_send('\n');
-        // printf("Hello, World!\r\n");
         
-        delay(1000000);  // Add delay between messages
+        delay(8000000);
     }
 }
-
-// #ifdef USE_FULL_ASSERT
-// void assert_failed(uint8_t* file, uint32_t line)
-// {
-//     /* User can add his own implementation to report the file name and line number */
-//     while (1)
-//     {
-//         /* 디버깅을 위해 무한 루프 */
-//     }
-// }
-// #endif

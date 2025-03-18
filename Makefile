@@ -1,20 +1,15 @@
 CC = arm-none-eabi-gcc
-CFLAGS = -mcpu=cortex-m3 -mthumb -O2 -g3 -Wall -Wextra \
+CFLAGS = -mcpu=cortex-m4 -mthumb -O2 -g3 -Wall -Wextra \
     -I./src \
-    -I./Libraries/STM32F10x_StdPeriph_Lib_V3.6.0/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x \
-    -I./Libraries/STM32F10x_StdPeriph_Lib_V3.6.0/Libraries/STM32F10x_StdPeriph_Driver/inc \
-    -I./Libraries/STM32F10x_StdPeriph_Lib_V3.6.0/Libraries/CMSIS/CM3/CoreSupport \
-    -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER -DUSE_FULL_ASSERT \
+    -I./CMSIS/Core/Include \
+    -I./CMSIS/Device/ARM/CMSDK_AN386/Include \
+    -DCMSDK_CM4 \
     -ffunction-sections -fdata-sections
 
 LDFLAGS = -T linker.ld -nostartfiles -Wl,--gc-sections
 
 SRC = src/main.c \
-      src/startup.s \
-      ./Libraries/STM32F10x_StdPeriph_Lib_V3.6.0/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c \
-      ./Libraries/STM32F10x_StdPeriph_Lib_V3.6.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c \
-      ./Libraries/STM32F10x_StdPeriph_Lib_V3.6.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c \
-      ./Libraries/STM32F10x_StdPeriph_Lib_V3.6.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c
+      src/startup.s
 
 OBJ = $(SRC:.c=.o)
 OBJ := $(OBJ:.s=.o)

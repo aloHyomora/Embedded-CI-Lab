@@ -1,12 +1,12 @@
 .syntax unified
-.cpu cortex-m3
+.cpu cortex-m4
 .thumb
 
 .section .vectors, "a", %progbits
 .align 8
 .global _vector_table
 _vector_table:
-    .word 0x20005000   /* 스택 포인터 초기값 수정 */
+    .word _estack    /* 8MB RAM 끝 주소 */
     .word Reset_Handler + 1   /* Ensure Reset_Handler is flagged for Thumb mode */
     /* Reset_Handler 주소에 1을 더하여 Thumb 모드를 활성화합니다. */
 

@@ -2,8 +2,8 @@ ENTRY(Reset_Handler)  /* 프로그램 시작점 강제 지정 */
 
 MEMORY
 {
-    FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 128K
-    RAM (rwx)  : ORIGIN = 0x20000000, LENGTH = 20K
+    FLASH (rx) : ORIGIN = 0x00000000, LENGTH = 4M    /* ZBT SRAM1 */
+    RAM (rwx)  : ORIGIN = 0x20000000, LENGTH = 8M    /* ZBT SRAM2 & 3 */
 }
 
 /* _estack의 값을 RAM 끝 주소로 설정 */
