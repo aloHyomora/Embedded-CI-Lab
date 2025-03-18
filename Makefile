@@ -1,8 +1,7 @@
 CC = arm-none-eabi-gcc
 CFLAGS = -mcpu=cortex-m4 -mthumb -O2 -g3 -Wall -Wextra \
     -I./src \
-    -I./CMSIS/Core/Include \
-    -I./CMSIS/Device/ARM/CMSDK_AN386/Include \
+    -I./CMSIS_5/CMSIS/Core/Include \
     -DCMSDK_CM4 \
     -ffunction-sections -fdata-sections
 
