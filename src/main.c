@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <core_cm4.h>         /* Makefile의 -I./CMSIS/Core/Include 옵션 활용 */
+#include "core_cm4.h"         /* Makefile의 -I./CMSIS/Core/Include 옵션 활용 */
 
 // UART0 registers structure (based on datasheet p.3-6)
 typedef struct {
