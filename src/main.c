@@ -62,6 +62,6 @@ int main(void) {
         uart_send('\r');
         uart_send('\n');
         
-        delay(8000000);
+        delay(1000000000);
     }
 }

@@ -11,6 +11,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the project...'  // 실제 빌드 명령어를 추가할 수 있음
+                echo 'clean make'
+                echo 'make'
             }
         }
 
