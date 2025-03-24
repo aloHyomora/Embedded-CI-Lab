@@ -11,14 +11,15 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the project...'  // 실제 빌드 명령어를 추가할 수 있음
-                echo 'make clean'
-                echo 'make'
+                sh 'make clean'
+                sh 'make'
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Running tests...'  // 실제 테스트 실행 (예: Google Test, PyTest)
+                sh 'qemu-system-arm -M mps2-an386 -nographic -kernel firmware.elf -d cpu_reset,in_asm -D qemu.log'
             }
         }
 
