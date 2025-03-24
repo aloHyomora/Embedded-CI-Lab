@@ -1,6 +1,10 @@
 pipeline {
     agent any  // 어떤 환경에서든 실행 가능
 
+    environment {
+        TIMEOUT_MINUTES = 2
+    }
+
     stages {
         stage('Clone Repository') {
             steps {
@@ -11,15 +15,31 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the project...'  // 실제 빌드 명령어를 추가할 수 있음
-                sh 'make clean'
-                sh 'make'
+                timeout(time: "${env.TIMEOUT_MINUTES}", unit: 'MINUTES') {
+                    sh 'make clean && make TEST_MODE=1'
+                }
             }
         }
-
-        stage('Test') {
+        
+        stage('QEMU Test') {
             steps {
-                echo 'Running tests...'  // 실제 테스트 실행 (예: Google Test, PyTest)
-                sh 'qemu-system-arm -M mps2-an386 -nographic -kernel firmware.elf -d cpu_reset,in_asm -D qemu.log'
+                timeout(time: "${env.TIMEOUT_MINUTES}", unit: 'MINUTES') {
+                    sh '''
+                        qemu-system-arm -M stm32vldiscovery -nographic \
+                        -kernel firmware.elf > qemu_output.txt & \
+                        QEMU_PID=$!
+                        
+                        # Wait for expected output count
+                        count=0
+                        while [ $count -lt 5 ]; do
+                            count=$(grep -c "Hello" qemu_output.txt)
+                            sleep 1
+                        done
+                        
+                        kill $QEMU_PID
+                        exit 0
+                    '''
+                }
             }
         }
 

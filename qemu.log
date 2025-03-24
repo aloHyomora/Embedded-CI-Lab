@@ -39,90 +39,100 @@ IN: Reset_Handler
 
 ----------------
 IN: main
-0x000000c8:  4819       ldr	r0, [pc, #100]	(0x130)
+0x000000c8:  481c       ldr	r0, [pc, #112]	(0x13c)
 0x000000ca:  f04f 2340  mov.w	r3, #1073758208	; 0x40004000
-0x000000ce:  2400       movs	r4, #0
+0x000000ce:  b5f0       push	{r4, r5, r6, r7, lr}
 0x000000d0:  21d9       movs	r1, #217
-0x000000d2:  2203       movs	r2, #3
-0x000000d4:  b480       push	{r7}
-0x000000d6:  f04f 0c48  mov.w	ip, #72	; 0x48
-0x000000da:  6004       str	r4, [r0, #0]
-0x000000dc:  2765       movs	r7, #101
-0x000000de:  60d9       str	r1, [r3, #12]
-0x000000e0:  206c       movs	r0, #108
-0x000000e2:  609a       str	r2, [r3, #8]
-0x000000e4:  266f       movs	r6, #111
-0x000000e6:  250d       movs	r5, #13
-0x000000e8:  240a       movs	r4, #10
-0x000000ea:  685a       ldr	r2, [r3, #4]
-0x000000ec:  07d2       lsls	r2, r2, #31
-0x000000ee:  d4fc       bmi.n	0xea
+0x000000d2:  2400       movs	r4, #0
+0x000000d4:  2203       movs	r2, #3
+0x000000d6:  6004       str	r4, [r0, #0]
+0x000000d8:  f04f 0e48  mov.w	lr, #72	; 0x48
+0x000000dc:  60d9       str	r1, [r3, #12]
+0x000000de:  2005       movs	r0, #5
+0x000000e0:  609a       str	r2, [r3, #8]
+0x000000e2:  f04f 0c65  mov.w	ip, #101	; 0x65
+0x000000e6:  246c       movs	r4, #108
+0x000000e8:  276f       movs	r7, #111
+0x000000ea:  260d       movs	r6, #13
+0x000000ec:  250a       movs	r5, #10
+0x000000ee:  685a       ldr	r2, [r3, #4]
+0x000000f0:  07d2       lsls	r2, r2, #31
+0x000000f2:  d4fc       bmi.n	0xee
 
 ----------------
 IN: main
-0x000000f0:  f8c3 c000  str.w	ip, [r3]
-0x000000f4:  685a       ldr	r2, [r3, #4]
-0x000000f6:  07d1       lsls	r1, r2, #31
-0x000000f8:  d4fc       bmi.n	0xf4
+0x000000f4:  f8c3 e000  str.w	lr, [r3]
+0x000000f8:  685a       ldr	r2, [r3, #4]
+0x000000fa:  07d1       lsls	r1, r2, #31
+0x000000fc:  d4fc       bmi.n	0xf8
 
 ----------------
 IN: main
-0x000000fa:  601f       str	r7, [r3, #0]
-0x000000fc:  685a       ldr	r2, [r3, #4]
-0x000000fe:  07d2       lsls	r2, r2, #31
-0x00000100:  d4fc       bmi.n	0xfc
+0x000000fe:  f8c3 c000  str.w	ip, [r3]
+0x00000102:  685a       ldr	r2, [r3, #4]
+0x00000104:  07d2       lsls	r2, r2, #31
+0x00000106:  d4fc       bmi.n	0x102
 
 ----------------
 IN: main
-0x00000102:  6018       str	r0, [r3, #0]
-0x00000104:  685a       ldr	r2, [r3, #4]
-0x00000106:  07d1       lsls	r1, r2, #31
-0x00000108:  d4fc       bmi.n	0x104
+0x00000108:  601c       str	r4, [r3, #0]
+0x0000010a:  685a       ldr	r2, [r3, #4]
+0x0000010c:  07d1       lsls	r1, r2, #31
+0x0000010e:  d4fc       bmi.n	0x10a
 
 ----------------
 IN: main
-0x0000010a:  6018       str	r0, [r3, #0]
-0x0000010c:  685a       ldr	r2, [r3, #4]
-0x0000010e:  07d2       lsls	r2, r2, #31
-0x00000110:  d4fc       bmi.n	0x10c
+0x00000110:  601c       str	r4, [r3, #0]
+0x00000112:  685a       ldr	r2, [r3, #4]
+0x00000114:  07d2       lsls	r2, r2, #31
+0x00000116:  d4fc       bmi.n	0x112
 
 ----------------
 IN: main
-0x00000112:  601e       str	r6, [r3, #0]
-0x00000114:  685a       ldr	r2, [r3, #4]
-0x00000116:  07d1       lsls	r1, r2, #31
-0x00000118:  d4fc       bmi.n	0x114
+0x00000118:  601f       str	r7, [r3, #0]
+0x0000011a:  685a       ldr	r2, [r3, #4]
+0x0000011c:  07d1       lsls	r1, r2, #31
+0x0000011e:  d4fc       bmi.n	0x11a
 
 ----------------
 IN: main
-0x0000011a:  601d       str	r5, [r3, #0]
-0x0000011c:  685a       ldr	r2, [r3, #4]
-0x0000011e:  07d2       lsls	r2, r2, #31
-0x00000120:  d4fc       bmi.n	0x11c
+0x00000120:  601e       str	r6, [r3, #0]
+0x00000122:  685a       ldr	r2, [r3, #4]
+0x00000124:  07d2       lsls	r2, r2, #31
+0x00000126:  d4fc       bmi.n	0x122
 
 ----------------
 IN: main
-0x00000122:  4a04       ldr	r2, [pc, #16]	(0x134)
-0x00000124:  601c       str	r4, [r3, #0]
-0x00000126:  4611       mov	r1, r2
-0x00000128:  3a01       subs	r2, #1
-0x0000012a:  2900       cmp	r1, #0
-0x0000012c:  d1fb       bne.n	0x126
+0x00000128:  4a05       ldr	r2, [pc, #20]	(0x140)
+0x0000012a:  601d       str	r5, [r3, #0]
+0x0000012c:  4611       mov	r1, r2
+0x0000012e:  3a01       subs	r2, #1
+0x00000130:  2900       cmp	r1, #0
+0x00000132:  d1fb       bne.n	0x12c
 
 ----------------
 IN: main
-0x00000126:  4611       mov	r1, r2
-0x00000128:  3a01       subs	r2, #1
-0x0000012a:  2900       cmp	r1, #0
-0x0000012c:  d1fb       bne.n	0x126
+0x0000012c:  4611       mov	r1, r2
+0x0000012e:  3a01       subs	r2, #1
+0x00000130:  2900       cmp	r1, #0
+0x00000132:  d1fb       bne.n	0x12c
 
 ----------------
 IN: main
-0x0000012e:  e7dc       b.n	0xea
+0x00000134:  3801       subs	r0, #1
+0x00000136:  d1da       bne.n	0xee
 
 ----------------
 IN: main
-0x000000ea:  685a       ldr	r2, [r3, #4]
-0x000000ec:  07d2       lsls	r2, r2, #31
-0x000000ee:  d4fc       bmi.n	0xea
+0x000000ee:  685a       ldr	r2, [r3, #4]
+0x000000f0:  07d2       lsls	r2, r2, #31
+0x000000f2:  d4fc       bmi.n	0xee
+
+----------------
+IN: main
+0x00000138:  bdf0       pop	{r4, r5, r6, r7, pc}
+
+----------------
+IN: Reset_Handler
+0x00000078:  e7fe       b.n	0x78
 

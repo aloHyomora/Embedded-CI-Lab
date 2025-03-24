@@ -5,6 +5,10 @@ CFLAGS = -mcpu=cortex-m4 -mthumb -O2 -g3 -Wall -Wextra \
     -DCMSDK_CM4 \
     -ffunction-sections -fdata-sections
 
+ifdef TEST_MODE
+    CFLAGS += -DTEST_MODE
+endif
+
 LDFLAGS = -T linker.ld -nostartfiles -Wl,--gc-sections
 
 SRC = src/main.c \

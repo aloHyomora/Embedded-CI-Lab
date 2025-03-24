@@ -49,10 +49,31 @@ void delay(volatile uint32_t count) {
     while (count--);
 }
 
+#define TEST_MODE   // 테스트 모드 활성화
+#ifdef TEST_MODE
+    #define TEST_ITERATIONS 5  // 테스트용 반복 횟수
+#endif
+
 int main(void) {
     system_init();
     uart_init();
     
+#ifdef TEST_MODE
+    int test_count = 0;
+    while (test_count < TEST_ITERATIONS) {
+        uart_send('H');
+        uart_send('e');
+        uart_send('l');
+        uart_send('l');
+        uart_send('o');
+        uart_send('\r');
+        uart_send('\n');
+        
+        delay(1000000000);
+        test_count++;
+    }
+    return 0;  // 테스트 성공적으로 완료
+#else
     while (1) {
         uart_send('H');
         uart_send('e');
@@ -64,4 +85,6 @@ int main(void) {
         
         delay(1000000000);
     }
+    return 1;  // 비정상 종료 (while(1)을 벗어난 경우)
+#endif
 }
