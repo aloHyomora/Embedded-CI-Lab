@@ -83,7 +83,8 @@ int main(void) {
         uart_send('\r');
         uart_send('\n');
         
-        delay(1000000000);
+        delay(1000000000);        
+        
     }
     return 1;  // 비정상 종료 (while(1)을 벗어난 경우)
 #endif
